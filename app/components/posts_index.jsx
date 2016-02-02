@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { fetchPosts } from '../actions/index';
+import { Link } from 'react-router';
 
 class PostsIndex extends Component {
     // Solo se llama una vez cuando se crea el componente.
@@ -8,11 +9,38 @@ class PostsIndex extends Component {
         this.props.fetchPosts();
     }
 
+    renderPosts() {
+        return this.props.posts.map((post) => {
+            return (
+                <li className="list-group-item" key={post.id}>
+                    <Link to={"posts/" + post.id}>
+                        <span className="pull-xs-right">{post.categories}</span>
+                        <strong>{post.title}</strong>
+                    </Link>
+                </li>
+            );
+        });
+    }
+
     render() {
         return (
-            <div>Lista de posts</div>
+            <div>
+                <div className="text-xs-right">
+                    <Link to="/posts/new" className="btn btn-primary">
+                        Agregar Post
+                    </Link>
+                </div>
+                <h3>Posts</h3>
+                <ul className="list-group">
+                    {this.renderPosts()}
+                </ul>
+            </div>
         );
     }
+}
+
+function mapStateToProps(state) {
+    return { posts: state.posts.all };
 }
 
 /* Esta función está comentada porque también puede ser utilizada como se
@@ -28,4 +56,4 @@ function mapDispatchToProps(dispatch) {
 //export default connect(null, { fetchPosts: fetchPosts }) (PostsIndex);
 // Utilizando es6, la sentencia export default de arriba queda porque la propiedad
 // fetchPosts se llama igual.
-export default connect(null, { fetchPosts }) (PostsIndex);
+export default connect(mapStateToProps, { fetchPosts }) (PostsIndex);
